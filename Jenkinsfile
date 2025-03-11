@@ -20,14 +20,14 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'source $VENV/bin/activate && pip install -r requirements.txt'
+                powershell 'source $VENV/bin/activate && pip install -r requirements.txt'
             }
         }
 
         stage('Run Flask Application') {
             steps {
                 echo 'Starting Flask App...'
-                sh 'source $VENV/bin/activate && python app.py &'
+                powershell 'source $VENV/bin/activate && python app.py &'
             }
         }
     }
