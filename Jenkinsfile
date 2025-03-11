@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        VENV = 'venv'
+        VENV = "venv"
     }
 
     stages {
@@ -14,20 +14,29 @@ pipeline {
 
         stage('Setup Python Environment') {
             steps {
-                powershell 'python --version'
+                powershell '''
+                python --version
+                python -m venv $env:VENV
+                '''
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                powershell 'source $VENV/bin/activate && pip install -r requirements.txt'
+                powershell '''
+                . $env:VENV\\Scripts\\Activate
+                pip install --upgrade pip
+                pip install -r requirements.txt
+                '''
             }
         }
 
         stage('Run Flask Application') {
             steps {
-                echo 'Starting Flask App...'
-                powershell 'source $VENV/bin/activate && python app.py &'
+                powershell '''
+                . $env:VENV\\Scripts\\Activate
+                python app.py
+                '''
             }
         }
     }
