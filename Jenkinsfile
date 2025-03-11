@@ -35,9 +35,10 @@ pipeline {
             steps {
                 powershell '''
                 . $env:VENV\\Scripts\\Activate
-                Start-Process -NoNewWindow -FilePath python -ArgumentList "app.py"
-                Start-Sleep -Seconds 5
+                Start-Process -NoNewWindow -FilePath python -ArgumentList "app.py" -RedirectStandardOutput flask.log -RedirectStandardError flask_error.log
+                Start-Sleep -Seconds 10
                 '''
+                echo 'Flask app started successfully!'
             }
         }
 
@@ -53,7 +54,7 @@ pipeline {
         stage('Stop Flask') {
             steps {
                 powershell '''
-                Get-Process | Where-Object { $_.ProcessName -like "*python*" } | Stop-Process -Force
+                Get-Process | Where-Object { $_.ProcessName -like "*python*" -and $_.MainWindowTitle -like "*Flask*" } | Stop-Process -Force
                 '''
             }
         }
@@ -61,10 +62,10 @@ pipeline {
 
     post {
         success {
-            echo 'Deployment Successful!'
+            echo '✅ Deployment Successful!'
         }
         failure {
-            echo 'Deployment Failed. Check error logs.'
+            echo '❌ Deployment Failed. Check error logs.'
         }
     }
 }
