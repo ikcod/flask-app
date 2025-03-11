@@ -14,8 +14,7 @@ pipeline {
 
         stage('Setup Python Environment') {
             steps {
-                sh 'python3 -m venv $VENV'
-                sh 'source $VENV/bin/activate && pip install --upgrade pip'
+                powershell 'python --version'
             }
         }
 
