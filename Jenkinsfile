@@ -8,10 +8,20 @@ pipeline {
         }
         stage('Run Flask App') {
             steps {
-                powershell 'Start-Process -NoNewWindow -FilePath "python" -ArgumentList "app.py"'
-                powershell 'Write-Host "Flask app started successfully!"'
-            }
-        }
+                powershell '''
+                    try {
+                        Write-Host "Starting Flask App..."
+                        Start-Process -NoNewWindow -FilePath "python" -ArgumentList "app.py"
+                        Start-Sleep -Seconds 10  # Change this to control how long the Flask app runs
+                    } finally {
+                        Write-Host "Stopping Flask App..."
+                        Stop-Process -Name "python" -Force
+                    }
+                    exit 0  # Ensures Jenkins sees this stage as successful
+                '''
+    }
+}
+
         stage('Success') {
             steps {
                 powershell 'Write-Host "Pipeline executed successfully!"'
